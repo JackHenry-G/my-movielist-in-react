@@ -1,5 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Header from "./components/Header";
+import Signup from "./pages/Signup";
+import Login from "./pages/Login";
 import Home from "./pages/Home";
 import Movies from "./pages/Movies";
 import Search from "./pages/Search";
@@ -16,6 +18,8 @@ export default function App() {
         <div className="bottom-section">
           <Routes>
             <Route index element={<Home />} /> {/* Default route */}
+            <Route path="/login" element={<Login/>} />
+            <Route path="/signup" element={<Signup />} />
             <Route path="/home" element={<Home />} />
             <Route path="/movies" element={<Movies />} />
             <Route path="/search" element={<Search />} />
