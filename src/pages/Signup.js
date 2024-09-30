@@ -1,5 +1,6 @@
-import { useState } from "react";
-import axios from "axios";
+import React, {useState} from "react";
+import axiosInstance from "../components/AxiosInstance";
+import profilePicsImage from "../images/profile_pics_wide.png";
 
 export default function Signup() {
     const [email, setEmail] = useState("");
@@ -24,6 +25,8 @@ export default function Signup() {
     const handleSubmit = async (event) => {
         event.preventDefault(); // Prevent form from immediately submitting
 
+        setIsLoading(true);
+
         if (!validateForm()) return;
 
         const defaultLatitude = 51.5074;
@@ -32,9 +35,6 @@ export default function Signup() {
         if ("geolocation" in navigator) {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
-                    console.log(1);
-                    console.log(position.coords.latitude);
-                    console.log(position.coords.longitude);
                     setLatitude(position.coords.latitude);
                     setLongitude(position.coords.longitude);
                     submitForm();
@@ -47,7 +47,6 @@ export default function Signup() {
                 }
             );
         } else {
-            console.log(3);
             setLatitude(defaultLatitude);
             setLongitude(defaultLongitude);
             submitForm();
@@ -55,7 +54,6 @@ export default function Signup() {
     };
 
     const submitForm = async () => {
-        setIsLoading(true);
 
         const formData = {
             email,
@@ -67,7 +65,7 @@ export default function Signup() {
 
 
         try {
-            const response = await axios.post('http://localhost:8080/api/v1/auth/signup', formData, {
+            const response = await axiosInstance.post('/auth/signup', formData, {
                 headers: {
                     'Content-Type': 'application/json',
                 }
@@ -75,8 +73,11 @@ export default function Signup() {
 
             if (response.status === 200) {
                 setError(null);
-                setUsername("test"); // FOR TEST PURPOSES ONLY
-                setPassword("pwd"); // FOR TEST PURPOSES ONLY
+
+                if (username === "test") {
+                    setUsername("test"); // FOR TEST PURPOSES ONLY
+                    setPassword("pwd"); // FOR TEST PURPOSES ONLY
+                }
                 setLoginSuccess('User signed up successfully!');
             } else {
                 setLoginSuccess(null);
@@ -94,58 +95,70 @@ export default function Signup() {
     };
 
     return (
-        <div className="signup-form">
-            {error && <p style={{ color: 'red' }}>{error}</p>}
-            {loginSuccess && <p style={{ color: 'green' }}>{loginSuccess}</p>}
-            {loading && (
-                <div className="loading-container">
-                    <p>Processing your signup...</p>
-                </div>
-            )}
+        <div className="profile-page-wrapper">
 
-            <form onSubmit={handleSubmit}>
-                <label htmlFor="email">Email:</label>
-                <input
-                    type="email"
-                    name="email"
-                    placeholder="Enter email..."
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                />
+            <div className="user-profile-form">
+                <div
+                    className="user-profile-form-banner"
+                    style={{
+                        backgroundImage: `url(${profilePicsImage})`
+                    }}
+                ></div>
 
-                <label htmlFor="username">Username:</label>
-                <input
-                    type="text"
-                    name="username"
-                    placeholder="Enter username..."
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    required
-                />
+                <form onSubmit={handleSubmit}>
+                    <label htmlFor="email">Email:</label>
+                    <input
+                        type="email"
+                        name="email"
+                        placeholder="Enter email..."
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                    />
 
-                <label htmlFor="password">Password:</label>
-                <input
-                    type="password"
-                    name="password"
-                    placeholder="Enter password..."
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                />
+                    <label htmlFor="username">Username:</label>
+                    <input
+                        type="text"
+                        name="username"
+                        placeholder="Enter username..."
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        required
+                    />
 
-                <input type="hidden" name="latitude" value={latitude} />
-                <input type="hidden" name="longitude" value={longitude} />
+                    <label htmlFor="password">Password:</label>
+                    <input
+                        type="password"
+                        name="password"
+                        placeholder="Enter password..."
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                    />
 
-                <button type="submit">Register</button>
+                    <input type="hidden" name="latitude" value={latitude}/>
+                    <input type="hidden" name="longitude" value={longitude}/>
 
-                <p>Already have an account? <a href="/login">Login here</a></p>
+                    <button type="submit">Register</button>
 
-                <p>
-                    Location information will be requested on signup. Feel free to say no,
-                    we will use London by default.
-                </p>
-            </form>
+                    <p>Already have an account? <a href="/login">Login here</a></p>
+
+                    { /* THIS IS FOR FUTURE IMPLEMENTATION
+                     <p>
+                        Location information will be requested on signup. Feel free to say no,
+                        we will use London by default.
+                    </p>
+                    */ }
+                </form>
+
+                {error && <p style={{color: 'red'}}>{error}</p>}
+                {loginSuccess && <p style={{color: 'green'}}>{loginSuccess}</p>}
+                {loading && (
+                    <div className="loading-container">
+                        <p>Processing your signup...</p>
+                    </div>
+                )}
+            </div>
         </div>
     );
 }

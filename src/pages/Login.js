@@ -1,16 +1,20 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import React, {useState} from 'react';
+import {useLocation, useNavigate} from 'react-router-dom';
+import {useAuth} from "../components/AuthContext";
+import axiosInstance from "../components/AxiosInstance";
+import profilePicsImage from "../images/profile_pics_wide.png";
 
 const LoginPage = () => {
+    const {login} = useAuth();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [loginSuccess, setLoginSuccess] = useState('');
     const [logoutMessage, setLogoutMessage] = useState('');
-    const [showTest, setShowTest] = useState(false); // Assuming you want to control this with some logic
 
     const navigate = useNavigate();
+    const location = useLocation();
+    const from = location.state?.from?.pathname || "/home";
 
     const handleLogin = async (event) => {
         event.preventDefault();
@@ -21,24 +25,32 @@ const LoginPage = () => {
         setLogoutMessage('');
 
         try {
-            const response = await axios.post('http://localhost:8080/api/v1/auth/signin', {
+            const response = await axiosInstance.post('/auth/signin', {
                 username,
                 password,
             });
 
-            // Store the token in local storage (or session storage, based on your use case)
-            const { token, returnedUsername, returnedEmail } = response.data;
-            localStorage.setItem('token', token);
-            localStorage.setItem('username', returnedUsername);
-            localStorage.setItem('email', returnedEmail);
+            if (response.status === 200) {
+                // use the login function from context to store auth token in local storage
+                const {token, username, email} = response.data;
+                console.log(response.data);
+                login(token, username, email);
 
-            // Clear the input fields
-            setError(null);
-            setUsername('');
-            setPassword('');
+                // Clear the input fields
+                setError(null);
+                setUsername('');
+                setPassword('');
 
-            navigate("/home");
+                // on successful login, navigate to the original protected page or to the home page
+                navigate(from, {replace: true});
+            } else {
+                console.error('The server did not return a 200 message:', error.response.data);
+                setLoginSuccess(null);
+                setError('Login failed: Please try again later.');
+            }
         } catch (error) {
+            console.log("RESPONSE: " + error);
+
             if (error.response) {
                 console.error('Login error:', error.response.data);
                 setLoginSuccess(null);
@@ -53,7 +65,7 @@ const LoginPage = () => {
 
     const handleRegisterTestUser = async () => {
         try {
-            const response = await axios.get("http://localhost:8080/api/v1/auth/signuptest");
+            const response = await axiosInstance.get("/auth/signuptest");
 
 
             console.log("Response = " + JSON.stringify(response));
@@ -71,6 +83,8 @@ const LoginPage = () => {
             }
 
         } catch (error) {
+            console.log("The error is - " + error);
+
             if (error.response) {
                 if (error.response.status === 400) {
                     console.error('Bad Request:', error.response.data);
@@ -82,54 +96,63 @@ const LoginPage = () => {
                     console.error('Unexpected error:', error.response.status, error.response.data);
                 }
             } else {
-                setLoginSuccess(error.response.data);
-                setError('Error:' + error.response.status + error.response.data);
+                setLoginSuccess(null);
+                setError('There is an issue with signing you up as a user. Please contact your admin.');
             }
         }
 
     };
 
     return (
-        <div className="user-form">
-            {/* Display error message if 'error' state is not empty */}
-            {error && <p style={{color: 'red'}}>{error}</p>}
+        <div className="profile-page-wrapper">
+            <div className="user-profile-form">
+                <div
+                    className="user-profile-form-banner"
+                    style={{
+                        backgroundImage: `url(${profilePicsImage})`
+                    }}
+                ></div>
 
-            {/* Display success message if 'loginSuccess' state is not empty */}
-            {loginSuccess && <p style={{color: 'green'}}>{loginSuccess}</p>}
+                <form onSubmit={handleLogin}>
+                    <label htmlFor="username">Username:</label>
+                    <input
+                        type="text"
+                        name="username"
+                        placeholder="Enter username..."
+                        required
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                    />
 
-            {/* Display logout message if 'logoutMessage' state is not empty */}
-            {logoutMessage && <p style={{color: 'green'}}>{logoutMessage}</p>}
+                    <label htmlFor="password">Password:</label>
+                    <input
+                        type="password"
+                        name="password"
+                        placeholder="Enter password..."
+                        required
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
 
-            <form onSubmit={handleLogin}>
-                <label htmlFor="username">Username:</label>
-                <input
-                    type="text"
-                    name="username"
-                    placeholder="Enter username..."
-                    required
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                />
+                    <button type="submit">Sign in</button>
+                </form>
 
-                <label htmlFor="password">Password:</label>
-                <input
-                    type="password"
-                    name="password"
-                    placeholder="Enter password..."
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                />
+                <p>Don't have an account? <a href="/signup">Register here</a></p>
 
-                <button type="submit">Sign in</button>
-            </form>
+                <button onClick={handleRegisterTestUser} style={{background: 'green', margin: '20px'}}>Register TEST user</button>
 
-            <p>Don't have an account? <a href="/signup">Register here</a></p>
+                {error && <p style={{ color: 'red' }}>{error}</p>}
+                {loginSuccess && <p style={{ color: 'green' }}>{loginSuccess}</p>}
 
-            <button onClick={handleRegisterTestUser} style={{color: 'green'}}>Register TEST user</button>
+            </div>
+
+
 
         </div>
-    );
+
+
+    )
+        ;
 };
 
 export default LoginPage;

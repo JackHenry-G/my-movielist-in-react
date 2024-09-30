@@ -1,18 +1,40 @@
+/* --------------------- SETUP OF OVERALL PAGE ------------------ */
+
 :root {
-  --background-colour: #f7f7f7;
-  --secondary-background-colour: #393e46;
-  --text-colour: #5c636e;
-  --accent-colour: #ffd700;
+  --white-colour: #f7f7f7; /* white */
+  --light-blue: #2ba0c6; /* light blue */
+  --dark-blue: #0d3d55; /* dark blue */
+  --light-grey: #e0e0e0; /* light grey */
 }
 
 body {
-  background-color: var(--background-color);
+  color: var(--dark-blue);
+  background-color: var(--light-grey);
   margin: 0;
+  padding: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
     "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  height: 100vh;
+}
+
+#root {
+  height: 100%;
+}
+
+.app {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.bottom-section {
+  text-align: center;
+  justify-content: center;
+  height: 100%;
+  margin: 20px;
 }
 
 code {
@@ -20,61 +42,183 @@ code {
     monospace;
 }
 
+/* --------------------- HEADER ------------------ */
+
 .top-section {
-  background-color: var(--secondary-background-colour);
-  color: var(--background-colour);
-  box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.3);
+  background-color: var(--white-colour);
 }
 
 .top-section-bar {
-  padding: 10px;
   gap: 20px;
   display: flex;
 }
 
+.logo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 #logo {
-  border-radius: 10%;
-  height: 60px;
-  width: auto;
+  width: 50px; /* Set an equal width */
+  height: 50px; /* Set an equal height */
+  object-fit: cover;
+  margin: 10px;
+  border-radius: 50%;
+  border: 2px solid var(--dark-blue);
+  object-position: -15px 0; /* Adjust position to focus more on the right */
+
 }
 
 .nav-bar {
   width: 100%;
   display: flex;
-  justify-content: space-between;
+  justify-content: right;
   align-items: center;
   gap: 10px;
 }
 
-.nav-bar-normal,
-.nav-bar-admin {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-
-.nav-bar a {
+.nav-link {
   text-decoration: none;
-  color: var(--background-colour);
-  background-color: var(--text-colour);
-  padding: 10px;
-  border: 1px solid var(--accent-colour);
-  border-radius: 10%;
-  transition: color 0.4s ease, background-color 0.4s ease, border 0.4s ease;
+  color: var(--dark-blue);
+  font-size: 24px;
+  padding: 10px 15px;
+  border-radius: 5px; /* Rounded corners */
+  border-bottom: 2px solid transparent; /* Set the initial state of the border */
+  transition: border-bottom-color 0.3s; /* Smooth transition for hover */
 }
 
-.nav-bar a:hover {
-  background-color: var(--accent-colour);
-  border-radius: 10%;
-  color: var(--secondary-background-colour);
-  border: 1px solid var(--secondary-background-colour);
+.nav-link:hover {
+  border-bottom: 2px solid var(--dark-blue);
+}
+
+.nav-link.active {
+  border-bottom: 2px solid var(--dark-blue);
+}
+
+/* --------------------- PROFILE PAGE ------------------ */
+
+.profile-page-wrapper{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.user-profile-form {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--white-colour);
+  border: 2px solid var(--dark-blue);
+  border-radius: 10px;
+  height: 100%;
+  width: 50%;
+}
+
+
+.user-profile-form-banner {
+  background-size: cover;
+  border-radius: 10px;
+  background-position: center;
+  height: 25%;
+  width: 100%;
+}
+
+.user-profile-form form {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin: 10%;
+}
+
+.user-profile-form label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+.user-profile-form input {
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid var(--dark-blue);
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.user-profile-form input:disabled {
+  background-color: var(--light-grey);
+  color: var(--dark-blue);
+}
+
+.user-profile-form button {
+  background-color: var(--dark-blue);
+  color: var(--white-colour);
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  /* cursor: pointer; DISABLED WHILST WIP TODO: bring back this css once update username is fixed */
+  font-size: 16px;
+}
+
+/* TODO: bring back this css once update username is fixed
+.user-profile-form button:hover {
+  box-shadow: var(--dark-blue) 0 0 0 2px;
+  transition: box-shadow 0.2s;
+}
+DISABLED WHILST WIP */
+
+/* TODO: remove once update username is fixed */
+.user-profile-form button:disabled {
+  background-color: red;
+  opacity: 0.5;
+  color: var(--white-colour);
+}
+
+/* --------------------- HOME PAGE ------------------ */
+
+.home-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: var(--white-colour);
+  border: 2px solid var(--dark-blue);
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.home-container div {
+  padding: 20px;
+}
+
+.home-container-title, .home-container-sub-title {
+  padding: 10px;
+  margin: 0 250px;
+  border-bottom: 1px solid var(--dark-blue);
+}
+
+.home-container-tldr {
+  font-weight: bold;
+  font-size: 1em;
+  font-style: italic;
+  padding-top: 30px;
+}
+
+.home-container li {
+  list-style-type: none;
+  position: relative;
+  padding: 10px 20px;
+  margin-bottom: 10px;
+  background-color: var(--light-grey);
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s;
+}
+
+.home-container li:hover {
+  background-color: var(--white-colour);
 }
 
 /* --------------------- search page ------------------ */
-
-.search-page {
-  padding: 20px;
-}
 
 .search-bar {
   width: 100%;
@@ -84,7 +228,7 @@ code {
 
 .search-term {
   width: 100%;
-  border: 2px solid var(--secondary-background-colour);
+  border: 2px solid var(--dark-blue);
   border-right: none;
   padding: 5px;
   height: 20px;
@@ -95,24 +239,43 @@ code {
 .search-button {
   width: 40px;
   height: 34px;
-  border: 1px solid var(--secondary-background-colour);
-  background: var(--secondary-background-colour);
+  border: 1px solid var(--dark-blue);
+  background: var(--dark-blue);
   text-align: center;
-  color: var(--background-colour);
+  color: #fff;
   border-radius: 0 5px 5px 0;
   cursor: pointer;
   font-size: 20px;
 }
 
+.search-favourites {
+  display: flex;
+  justify-content: space-between;
+}
+
 .search-button-favourites {
-  border: 1px solid #fff;
+  background-color: var(--dark-blue);
+  color: var(--white-colour);
   padding: 5px;
-  background: black;
-  text-align: center;
-  color: #fff;
-  border-radius: 5px 5px 5px 5px;
+  margin-top: 5px;
+  font-size: 0.8em;
+  font-weight: bold;
   cursor: pointer;
-  margin: 5px;
+  border-radius: 3px;
+  flex-grow: 1; /* Allow the buttons to grow and fill the space */
+}
+
+.search-button-favourites:not(:first-child) {
+  margin-left: 5px; /* Add left margin for all but the first button */
+}
+
+.search-button-favourites:not(:last-child) {
+  margin-right: 5px; /* Add right margin for all but the last button */
+}
+
+.search-button-favourites:hover {
+    box-shadow: var(--dark-blue) 0 0 0 1px;
+    transition: box-shadow 0.2s;
 }
 
 #searchResultsGrid {
@@ -121,12 +284,17 @@ code {
 }
 
 .movie-box {
-  border: 2px solid black;
-  background-color: #ece9e2;
-  margin: 20px;
+  border: 2px solid var(--dark-blue);
+  border-radius: 5px;
+  background-color: var(--white-colour);
   display: flex;
   flex-direction: column;
   text-align: center;
+  margin-top: 10px
+}
+
+.movie-box:not(:first-child) {
+  margin-left: 10px; /* Add left margin for all but the first button */
 }
 
 .movie-box-poster {
@@ -134,7 +302,7 @@ code {
   background-repeat: no-repeat;
   height: 450px;
   width: 300px;
-  /* mask-image: linear-gradient(to bottom, #ece9e2 0, transparent 100%); */
+  mask-image: linear-gradient(to bottom, #ece9e2 98%, transparent 100%);
   margin-bottom: 5px;
 }
 
@@ -144,17 +312,16 @@ code {
   padding: 10px;
 }
 
-/* https://getcssscan.com/css-buttons-examples */
 .add-movie-button {
-  background-color: #ffffff;
-  border: 1px solid #222222;
+  color: var(--white-colour);
+  background-color: var(--dark-blue);
+  border: 1px solid var(--light-grey);
   border-radius: 8px;
   box-sizing: border-box;
-  color: #222222;
   cursor: pointer;
   display: inline-block;
   font-family: Circular, -apple-system, BlinkMacSystemFont, Roboto,
-    "Helvetica Neue", sans-serif;
+  "Helvetica Neue", sans-serif;
   font-size: 16px;
   font-weight: 600;
   line-height: 20px;
@@ -167,14 +334,14 @@ code {
   text-decoration: none;
   touch-action: manipulation;
   transition: box-shadow 0.2s, -ms-transform 0.1s, -webkit-transform 0.1s,
-    transform 0.1s;
+  transform 0.1s;
   user-select: none;
   -webkit-user-select: none;
   width: auto;
 }
 
 .add-movie-button:hover {
-  box-shadow: #555 0 0 0 2px;
+  box-shadow: var(--dark-blue) 0 0 0 2px;
   transition: box-shadow 0.2s;
 }
 
@@ -185,52 +352,110 @@ code {
 }
 
 /* -------------------- MODAL/POPUP FORM -------------------- */
-/* -------------------- https://www.w3schools.com/howto/howto_css_modals.asp -------------------- */
 
-/* The Modal (background) */
 .modal {
-  display: block; /* Hidden by default */
   position: fixed; /* Stay in place */
-  z-index: 9999; /* Sit on top */
-  left: 18%;
-  top: 20%;
+  top: 0; /* Stay at the top */
+  left: 0; /* Stay on the left */
   width: 100%; /* Full width */
   height: 100%; /* Full height */
-  overflow: auto; /* Enable scroll if needed */
-  background-color: rgb(0, 0, 0); /* Fallback color */
-  background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+  background-color: rgba(0, 0, 0, 0.5); /* Black background with transparency */
+  z-index: 100; /* Sit on top of other elements */
 }
 
-/* Modal Content/Box */
 .modal-content {
-  background-color: #ece9e2;
-  height: 50%;
-  border: 2px solid black;
-  text-align: center;
-  width: 80%; /* Could be more or less, depending on screen size */
-  display: flex;
-  flex-direction: column;
-  align-items: center; /* Center horizontally */
-  justify-content: center; /* Center vertically */
-}
-
-.modal-content label,
-.modal-content input,
-.modal-content button {
-  margin-bottom: 10px;
-}
-
-/* The Close Button */
-.close {
-  color: #aaa;
-  float: right;
-  font-size: 28px;
+  position: fixed; /* Stay in place */
+  top: 50%; /* Center vertically */
+  left: 50%; /* Center horizontally */
+  transform: translate(-50%, -50%); /* Adjust position */
+  background-color: white; /* Modal background */
+  padding: 20px; /* Padding inside the modal */
+  border-radius: 8px; /* Rounded corners */
+  border: 1px solid var(--dark-blue);
   font-weight: bold;
+  z-index: 101; /* Sit on top of the overlay */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5); /* Shadow effect */
 }
 
-.close:hover,
-.close:focus {
-  color: black;
+/* Input field styling */
+.modal-content input[type="number"] {
+  padding: 10px; /* Padding for input */
+  margin: 20px; /* Space below input */
+  width: 20%;
+  border: 1px solid var(--dark-blue); /* Light gray border */
+  border-radius: 4px; /* Rounded corners */
+  font-size: 16px; /* Font size */
+}
+
+/* Button styling */
+.modal-content button {
+  padding: 10px 15px; /* Padding for buttons */
+  border-radius: 4px; /* Rounded corners */
+  font-size: 16px; /* Font size */
+  cursor: pointer; /* Pointer cursor */
+  margin-top: 10px; /* Space above buttons */
+  border: 1px solid var(--dark-blue); /* Light gray border */
+}
+
+/* Submit button */
+.modal-content button[type="submit"] {
+  background-color: var(--dark-blue); /* Green background */
+  margin-right: 5px;
+  color: var(--white-colour); /* White text */
+}
+
+.modal-content button[type="button"] {
+  background-color: #dc3545; /* Red background */
+  color: white; /* White text */
+  transition: border-bottom-color 0.3s; /* Smooth transition for hover */
+}
+
+.modal-content button:hover {
+  border: 2px solid var(--dark-blue);
+  opacity: 0.9;
+}
+
+/* -------------------- MOVIES PAGE -------------------- */
+
+.movie-card {
+  background-color: var(--white-colour);
+  color: var(--dark-blue);
+  display: flex;
+  justify-content: space-between;
   text-decoration: none;
-  cursor: pointer;
+  max-height: 300px;
+  margin-bottom: 25px;
+  border-radius: 10px;
+  transition: background-color 0.3s;
+  border: 2px solid var(--dark-blue);
+  overflow: hidden;
+}
+
+.movie-card .text-content {
+  padding: 20px;
+  width: 80%;
+  overflow-y: hidden;
+  max-height: 200px;
+}
+
+.movie-card .text-content .top-content {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.movie-card .image-content {
+  background-size: cover;
+  background-repeat: no-repeat;
+  height: 300px;
+  width: 100%;
+  filter: brightness(90%) saturate(90%);
+  mask-image: linear-gradient(to left, var(--white-colour) 75%, transparent 100%);
+}
+
+.editable-rating {
+  width: 50px;
+  padding: 5px;
+  border: 1px solid var(--dark-blue);
+  border-radius: 4px;
+  font-size: 16px;
 }

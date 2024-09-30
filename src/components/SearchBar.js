@@ -4,12 +4,20 @@ import {useState} from "react";
 
 export default function SearchBar({handleSearch}) {
     const [query, setQuery] = useState("");
-    const handleChange = (event) => { setQuery(event.target.value); };
+
+    const handleChange = (event) => {
+        setQuery(event.target.value);
+    };
+
     const handleOnKeyUp = (event) => {
         if (event.key === "Enter") {
-            handleSearch(query);
+            handleSearch(String(query));
         }
     };
+
+    const handleButtonClick = () => {
+        handleSearch(String(query));
+    }
 
     return (
         <div className="search-bar">
@@ -22,7 +30,7 @@ export default function SearchBar({handleSearch}) {
                 onChange={handleChange}
                 onKeyUp={handleOnKeyUp}
             />
-            <button className="search-button" onClick={handleSearch}>
+            <button className="search-button" onClick={handleButtonClick}>
                 <FontAwesomeIcon icon={faSearch}/>
             </button>
         </div>
