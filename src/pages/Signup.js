@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import axiosInstance from "../components/AxiosInstance";
 import profilePicsImage from "../images/profile_pics_wide.png";
+import {useErrorContext} from "../context/ErrorContext";
 
 export default function Signup() {
     const [email, setEmail] = useState("");
@@ -9,16 +10,16 @@ export default function Signup() {
     const [latitude, setLatitude] = useState(0.0);
     const [longitude, setLongitude] = useState(0.0);
 
-    const [error, setError] = useState(null);
+    const { updateMessage } = useErrorContext();
+
     const [loginSuccess, setLoginSuccess] = useState('');
     const [loading, setIsLoading] = useState(false);
 
     const validateForm = () => {
         if (!email || !username || !password) {
-            setError("All fields are required!");
+            updateMessage("All fields are required!", false);
             return false;
         }
-        setError(null);
         return true;
     }
 
@@ -72,22 +73,18 @@ export default function Signup() {
             });
 
             if (response.status === 200) {
-                setError(null);
-
                 if (username === "test") {
                     setUsername("test"); // FOR TEST PURPOSES ONLY
                     setPassword("pwd"); // FOR TEST PURPOSES ONLY
                 }
-                setLoginSuccess('User signed up successfully!');
+                updateMessage('User signed up successfully!', true);
             } else {
-                setLoginSuccess(null);
-                setError('User sign up failed!');
+                updateMessage('User sign up failed!', false);
                 console.error('Failed to register user:', JSON.stringify(response));
             }
 
         } catch (err) {
-            setLoginSuccess(null);
-            setError('User sign up failed!');
+            updateMessage(err.message, false);
             console.error('Failed to register user:', JSON.stringify(err));
         } finally {
             setIsLoading(false);
@@ -151,7 +148,6 @@ export default function Signup() {
                     */ }
                 </form>
 
-                {error && <p style={{color: 'red'}}>{error}</p>}
                 {loginSuccess && <p style={{color: 'green'}}>{loginSuccess}</p>}
                 {loading && (
                     <div className="loading-container">

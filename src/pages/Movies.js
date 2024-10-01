@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../components/AxiosInstance";
 import {Link} from "react-router-dom";
+import {useErrorContext} from "../context/ErrorContext";
 
 export default function MovieList() {
   const [movies, setMovies] = useState([]);
-  const [error, setError] = useState("");
+  const { updateMessage } = useErrorContext();
 
   // Fetch movie connections
   useEffect(() => {
@@ -16,11 +17,11 @@ export default function MovieList() {
           setMovies(response.data);
         } else {
           console.error("Failed to fetch movies");
-          setError("Failed to fetch movies.");
+          updateMessage("Failed to fetch movies.", false);
         }
       } catch (error) {
         console.error("Error fetching movies:", error);
-        setError("An error occurred while fetching the movie list.");
+        updateMessage("An error occurred while fetching the movie list: " + error.message, false);
       }
     };
 
@@ -45,10 +46,23 @@ export default function MovieList() {
       );
 
       if (response.status === 200) {
-        window.location.href = "/movies";
+        // Update the movie's rating locally
+        const updatedMovies = movies.map((movie) =>
+            movie.movie_connection_id === movieConnectionId
+                ? { ...movie, rating: updatedRating }
+                : movie
+        );
+
+        // Sort movies by rating in descending order
+        updatedMovies.sort((a, b) => b.rating - a.rating);
+
+        // Update state with sorted movies
+        setMovies(updatedMovies);
+        updateMessage("Movie rating succesfully updated", true);
       }
     } catch (error) {
       console.error("Error updating movie rating:", error);
+      updateMessage(error.message, false);
     }
   };
 
@@ -63,11 +77,12 @@ export default function MovieList() {
 
 
       if (response.status === 200) {
-        console.log("Reponse = " + response);
         setMovies(movies.filter((movie) => movie.movie.movie_id !== movieId));
+        updateMessage("Movie deleted!", true);
       }
     } catch (error) {
       console.error("Error deleting movie:", error);
+      updateMessage("An error occurred while deleting the movie. Contact your administrator.", false);
     }
   };
 
@@ -143,8 +158,6 @@ export default function MovieList() {
                 </div>
             ))
         )}
-
-        {error && <p style={{ color: "red" }}>{error}</p>}
       </div>
   );
 

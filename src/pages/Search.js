@@ -2,13 +2,14 @@ import React, {useEffect, useState} from "react";
 import SearchBar from "../components/SearchBar";
 import axiosInstance from "../components/AxiosInstance";
 import {fetchProfileData} from "../services/profileService";
+import {useErrorContext} from "../context/ErrorContext";
+import CustomError from "../error/CustomError";
 
 export default function Search() {
+    const { updateMessage } = useErrorContext();
     const [movies, setMovies] = useState([]);
     const [tmdbMovieId, setTmdbMovieId] = useState("");
     const [isRatingPopupVisible, setIsRatingPopupVisible] = useState(false);
-    const [error, setError] = useState(null);
-    const [loading, setIsLoading] = useState(false);
     const [favouriteReleaseYear, setFavouriteReleaseYear] = useState("");
 
     // open or close box to allow user to rate the movie
@@ -18,12 +19,11 @@ export default function Search() {
     };
 
     const handleMovieSearchRequest = async (path, params, query) => {
-        setIsLoading(true);
-        setError(null); // Clear previous errors
+        updateMessage('Getting movies...', true);
 
         try {
             if (!query) {
-                setError('No favourite found. Please contact your admin.');
+                updateMessage('No search query found. Please contact your admin.', false);
                 return;
             }
 
@@ -36,17 +36,15 @@ export default function Search() {
 
             if (!foundMovies || !Array.isArray(foundMovies) || !foundMovies.length) {
                 setMovies([]);
-                setError("There were no movies found in this search. Give it another go!");
+                updateMessage("There were no movies found in this search. Give it another go!", false);
             } else {
-                setError('');
                 setMovies(foundMovies); // Movies found, populate list
+                updateMessage("Movies found", true);
             }
 
         } catch (error) {
             console.log("There was an error executing the search for movies - " + error);
-            setError("There has been a problem. Please try again or contact your admin.");
-        } finally {
-            setIsLoading(false);
+            updateMessage(error.message, false);
         }
     };
 
@@ -57,7 +55,7 @@ export default function Search() {
                 setFavouriteReleaseYear(data.favouriteReleaseYear);
             } catch (err) {
                 console.error("Failed to fetch profile data:", err.message);
-                setError(err.message);
+                updateMessage(err.message, false);
             }
         };
 
@@ -130,15 +128,6 @@ export default function Search() {
                 </div>
             )}
 
-
-            {loading && (
-                <div className="loading-container">
-                    <p>Movies are loading...</p>
-                </div>
-            )}
-
-            {error && <p style={{color: 'red'}}>{error}</p>}
-
             {isRatingPopupVisible && (
                 <PopupRatingBox
                     tmdbMovieId={tmdbMovieId}
@@ -187,6 +176,7 @@ function MovieBox({movie, openRatingPopup}) {
 
 function PopupRatingBox({tmdbMovieId, closeRatingPopup}) {
     const [movieRating, setMovieRating] = useState(5);
+    const { updateMessage } = useErrorContext();
 
     const handleSubmitMovieRating = async (event) => {
         event.preventDefault();
@@ -200,25 +190,21 @@ function PopupRatingBox({tmdbMovieId, closeRatingPopup}) {
 
             if (response.status === 200) {
                 console.log('Successful attempt: ', response);
-                alert("Movie added to your list successfully!");
+                updateMessage("Movie added to your list successfully!", true);
                 closeRatingPopup();
             }
         } catch (error) {
-            if (error.response) {
-                if (error.response.status === 409) {
-                    alert(error.response.data || "Movie was not added! This movie already exists in your list.");
-                } else {
-                    alert("There has been an error adding a movie to your list. Contact your admin!");
-                }
-            } else if (error.request) {
-                // The request was made but no response was received
-                console.error("No response received:", error.request);
-                alert("No response received from the server. Please try again later.");
+            // Check if the error is an instance of CustomError
+            if (error instanceof CustomError) {
+                updateMessage(error.message, false);
+            } else if (error.response) {
+                // Handle standard Axios errors
+                updateMessage('Unexpected error: ' + error.response.status + ' ' + error.response.data, false);
             } else {
-                // Something happened in setting up the request that triggered an Error
-                console.error("Error setting up request:", error.message);
-                alert("An unexpected error occurred. Please try again later.");
+                // Handle network errors or unknown issues
+                updateMessage('Unexpected error: ' + error.message, false);
             }
+            closeRatingPopup();
         }
     }
 

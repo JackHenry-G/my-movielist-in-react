@@ -1,16 +1,27 @@
 import {NavLink} from "react-router-dom";
 import logo from "../images/moviilist.png";
-import {useAuth} from './AuthContext'; // Import the useAuth hook
+import {useAuth} from '../context/AuthContext';
+import {useErrorContext} from "../context/ErrorContext"; // Import the useAuth hook
 
 export default function Header() {
     const {isAuthenticated} = useAuth();
+    const { message, isSuccess } = useErrorContext();
+
+    const messageClass = isSuccess ? 'success-message' : message ? 'error-message' : 'no-error-message';
 
     return (
         <div className="top-section-bar">
-            <div className="logo-container">
-                <img src={logo} id="logo" alt="Logo of the movielist application"/>
+            <div className="top-section-header">
+                <div className="logo-container">
+                    <img src={logo} id="logo" alt="Logo of the movielist application"/>
+                </div>
+                <NavigationBar isAuthenticated={isAuthenticated}/>
             </div>
-            <NavigationBar isAuthenticated={isAuthenticated}/>
+            <div className="top-section-footer">
+                <p className={messageClass}>
+                    {message ? message : "Welcome to MovieList."}
+                </p>
+            </div>
         </div>
     );
 }
@@ -23,7 +34,7 @@ function NavigationBar() {
         <div className="nav-bar">
             {isAuthenticated ? (
                 <>
-                    <NavLink className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")} to="/Home">Home</NavLink>
+                <NavLink className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")} to="/Home">Home</NavLink>
                     <NavLink className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")} to="/Movies">Movies</NavLink>
                     <NavLink className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")} to="/Search">Search</NavLink>
                     <NavLink className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")} to="/Profile">Profile</NavLink>

@@ -6,19 +6,24 @@ import Home from "./pages/Home";
 import Profile from "./pages/Profile";
 import Movies from "./pages/Movies";
 import PrivateRoute from "./components/PrivateRoute";
-import { AuthProvider } from "./components/AuthContext";
+import { AuthProvider } from "./context/AuthContext";
 import {setupAxiosInterceptors} from "./components/AxiosInstance";
 import {useEffect} from "react";
 import Search from "./pages/Search";
 import Logout from "./pages/Logout";
+import {ErrorProvider, useErrorContext} from "./context/ErrorContext";
 
 const AppRoutes = () => {
     const navigate = useNavigate();
     const location = useLocation();
+    const { updateMessage } = useErrorContext();
 
     // Set up Axios interceptors
     useEffect(() => {
-        setupAxiosInterceptors(navigate, location);
+        setupAxiosInterceptors(navigate, location, updateMessage);
+
+        updateMessage();
+
     }, [navigate, location]);
 
     return (
@@ -67,17 +72,19 @@ const AppRoutes = () => {
 export default function App() {
     return (
         <AuthProvider>
-            <BrowserRouter>
-                <div className="app">
-                    <div className="top-section">
-                        <Header />
-                    </div>
+            <ErrorProvider>
+                <BrowserRouter>
+                    <div className="app">
+                        <div className="top-section">
+                            <Header />
+                        </div>
 
-                    <div className="bottom-section">
-                        <AppRoutes /> {/* Use the AppRoutes component for routing */}
+                        <div className="bottom-section">
+                            <AppRoutes /> {/* Use the AppRoutes component for routing */}
+                        </div>
                     </div>
-                </div>
-            </BrowserRouter>
+                </BrowserRouter>
+            </ErrorProvider>
         </AuthProvider>
     );
 }

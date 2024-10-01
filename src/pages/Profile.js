@@ -2,12 +2,12 @@ import React, {useEffect, useState} from "react";
 import axiosInstance from "../components/AxiosInstance";
 import {fetchProfileData} from "../services/profileService";
 import profilePicsImage from "../images/profile_pics_wide.png";
-import {useAuth} from "../components/AuthContext";
+import {useAuth} from "../context/AuthContext";
+import {useErrorContext} from "../context/ErrorContext";
 
 export default function Profile() {
-    const {login} = useAuth();
-    const [error, setError] = useState('');
-    const [success, setSuccess] = useState('');
+    const { login } = useAuth();
+    const { updateMessage } = useErrorContext();
     const [userId, setUserId] = useState('');
     const [username, setUsername] = useState('');
     const [favouriteReleaseYear, setFavouriteReleaseYear] = useState('');
@@ -15,10 +15,6 @@ export default function Profile() {
     // TODO: Fix the updating of profile function. There is a problem with authenticating the user once the update has been made
     const handleUpdateProfile = async (event) => {
         event.preventDefault();
-
-        // Clear previous messages
-        setError('');
-        setSuccess('');
 
         try {
 
@@ -39,25 +35,14 @@ export default function Profile() {
                 // This will set the Authorization header for future requests
                 axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
-                setError(null);
-                setSuccess('Profile successfully updated!');
                 setUsername(response.data.username);
-                alert("User updated successfully!");
+                updateMessage("Profile updated successfully!", true);
             } else {
-                console.error('The server did not return a 200 message:', error.response.data);
-                setSuccess(null);
-                setError('Login failed: Please try again later.');
+                console.error('The server did not return a 200 message:', response);
+                updateMessage('Login failed: Please try again later.', false);
             }
         } catch (error) {
-            if (error.response) {
-                console.error('Login error:', error.response.data);
-                setSuccess(null);
-                setError('Login failed: ' + error.response.data);
-            } else {
-                console.error('Error:', error.response.data);
-                setSuccess(null);
-                setError('Login failed: Please try again later.');
-            }
+            updateMessage(error.message, false);
         }
     };
 
@@ -68,11 +53,9 @@ export default function Profile() {
                 setUserId(data.userId);
                 setFavouriteReleaseYear(data.favouriteReleaseYear);
                 setUsername(data.username);
-                setSuccess("Profile data fetched successfully.");
             } catch (err) {
-                console.error("Failed to fetch profile data:", err.message);
-                setError(err.message);
-                setSuccess(null);
+                console.error("Failed to fetch profile data", err.message);
+                updateMessage(err.message, false);
             }
         };
 

@@ -48,9 +48,38 @@ code {
   background-color: var(--white-colour);
 }
 
-.top-section-bar {
-  gap: 20px;
+.top-section-header {
   display: flex;
+  height: 60px
+}
+
+.top-section-footer {
+  opacity: 0.8;
+  font-size: 0.75em;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+.top-section-footer p {
+  border-top: 2px solid var(--light-grey);
+  border-bottom: 2px solid var(--light-grey);
+  color: var(--white-colour);
+  padding: 5px;
+  margin: 0;
+  text-align: center;
+}
+
+.error-message {
+  background-color: red;
+}
+
+.no-error-message {
+  background-color: var(--dark-blue);
+}
+
+.success-message {
+  background-color: green; /* Customize this color */
 }
 
 .logo-container {
@@ -156,16 +185,14 @@ code {
   padding: 10px 15px;
   border: none;
   border-radius: 4px;
-  /* cursor: pointer; DISABLED WHILST WIP TODO: bring back this css once update username is fixed */
+  cursor: pointer;
   font-size: 16px;
 }
 
-/* TODO: bring back this css once update username is fixed
 .user-profile-form button:hover {
   box-shadow: var(--dark-blue) 0 0 0 2px;
   transition: box-shadow 0.2s;
 }
-DISABLED WHILST WIP */
 
 /* TODO: remove once update username is fixed */
 .user-profile-form button:disabled {
