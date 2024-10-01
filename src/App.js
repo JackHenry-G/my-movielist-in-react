@@ -22,7 +22,9 @@ const AppRoutes = () => {
     useEffect(() => {
         setupAxiosInterceptors(navigate, location, updateMessage);
 
-        updateMessage();
+        if (location.pathname !== '/login') {
+            updateMessage();
+        }
 
     }, [navigate, location]);
 
