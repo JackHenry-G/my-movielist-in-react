@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import axiosInstance from "../components/AxiosInstance";
+import axiosInstance from "../utils/AxiosInstance";
 import {Link} from "react-router-dom";
-import {useErrorContext} from "../context/ErrorContext";
+import {useMessageContext} from "../context/MessageContext";
 
 export default function MovieList() {
   const [movies, setMovies] = useState([]);
-  const { updateMessage } = useErrorContext();
+  const { updateMessage } = useMessageContext();
 
   // Fetch movie connections
   useEffect(() => {

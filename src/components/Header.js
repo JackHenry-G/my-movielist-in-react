@@ -1,11 +1,12 @@
 import {NavLink} from "react-router-dom";
 import logo from "../images/moviilist.png";
 import {useAuth} from '../context/AuthContext';
-import {useErrorContext} from "../context/ErrorContext"; // Import the useAuth hook
+import {useMessageContext} from "../context/MessageContext";
+import {isTestMode} from "../utils/config";
 
 export default function Header() {
-    const {isAuthenticated} = useAuth();
-    const { message, isSuccess } = useErrorContext();
+    const { isAuthenticated } = useAuth();
+    const { message, isSuccess } = useMessageContext();
 
     const messageClass = isSuccess ? 'success-message' : message ? 'error-message' : 'no-error-message';
 
@@ -19,7 +20,7 @@ export default function Header() {
             </div>
             <div className="top-section-footer">
                 <p className={messageClass}>
-                    {message ? message : "Welcome to MovieList."}
+                    {isTestMode && "( !!! TEST MODE !!! ) "} {message ? message : "Welcome to MovieList."}
                 </p>
             </div>
         </div>

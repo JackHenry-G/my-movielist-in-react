@@ -1,22 +1,22 @@
 import {createContext, useContext, useState} from "react";
 
-const ErrorContext = createContext();
+const MessageContext = createContext();
 
-export const ErrorProvider = ({ children }) => {
+export const MessageProvider = ({ children }) => {
     const [message, setMessage] = useState('');
     const [isSuccess, setIsSuccess] = useState(false); // null = blue, false = red, true = green
 
     const updateMessage = (message, success) => {
-        console.log("UPdate message: " + message);
+        console.log("Updating message to: " + message);
         setMessage(message);
         setIsSuccess(success);
     };
 
     return (
-        <ErrorContext.Provider value={{ message, updateMessage, isSuccess }}>
+        <MessageContext.Provider value={{ message, updateMessage, isSuccess }}>
             {children}
-        </ErrorContext.Provider>
+        </MessageContext.Provider>
     );
 };
 
-export const useErrorContext = () => useContext(ErrorContext);
+export const useMessageContext = () => useContext(MessageContext);

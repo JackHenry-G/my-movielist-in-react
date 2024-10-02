@@ -1,16 +1,16 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import SearchBar from "../components/SearchBar";
-import axiosInstance from "../components/AxiosInstance";
-import {fetchProfileData} from "../services/profileService";
-import {useErrorContext} from "../context/ErrorContext";
+import axiosInstance from "../utils/AxiosInstance";
+import { useMessageContext } from "../context/MessageContext";
 import CustomError from "../error/CustomError";
+import useProfile from "../hooks/useProfile";
 
 export default function Search() {
-    const { updateMessage } = useErrorContext();
+    const { updateMessage } = useMessageContext();
+    const profile = useProfile();
     const [movies, setMovies] = useState([]);
     const [tmdbMovieId, setTmdbMovieId] = useState("");
     const [isRatingPopupVisible, setIsRatingPopupVisible] = useState(false);
-    const [favouriteReleaseYear, setFavouriteReleaseYear] = useState("");
 
     // open or close box to allow user to rate the movie
     const toggleRatingPopup = (tmdbMovieId = null) => {
@@ -48,21 +48,6 @@ export default function Search() {
         }
     };
 
-    useEffect(() => {
-        const getProfileData = async () => {
-            try {
-                const data = await fetchProfileData(); // Call the utility function
-                setFavouriteReleaseYear(data.favouriteReleaseYear);
-            } catch (err) {
-                console.error("Failed to fetch profile data:", err.message);
-                updateMessage(err.message, false);
-            }
-        };
-
-        getProfileData();
-    }, []); // The empty dependency array ensures this runs only once and when the component mounts. Rather than everytime a dependency (variable) changes through state
-
-
     return (
         <div className="search-page">
             <SearchBar
@@ -77,12 +62,12 @@ export default function Search() {
                     type="button"
                     onClick={() => handleMovieSearchRequest(
                         '/tmdb/search/moviesByReleaseYear',
-                        { releaseYear: String(favouriteReleaseYear) },
-                        favouriteReleaseYear
+                        { releaseYear: String(profile.favouriteReleaseYear) },
+                        profile.favouriteReleaseYear
                     )}
                     className="search-button-favourites"
                 >
-                    {favouriteReleaseYear}
+                    {profile.favouriteReleaseYear}
                 </button>
                 <button
                     type="button"
@@ -176,7 +161,7 @@ function MovieBox({movie, openRatingPopup}) {
 
 function PopupRatingBox({tmdbMovieId, closeRatingPopup}) {
     const [movieRating, setMovieRating] = useState(5);
-    const { updateMessage } = useErrorContext();
+    const { updateMessage } = useMessageContext();
 
     const handleSubmitMovieRating = async (event) => {
         event.preventDefault();

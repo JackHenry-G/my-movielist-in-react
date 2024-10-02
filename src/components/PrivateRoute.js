@@ -1,20 +1,22 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import {useAuth} from "../context/AuthContext";
-import {useErrorContext} from "../context/ErrorContext";
+import {useMessageContext} from "../context/MessageContext";
 
 const PrivateRoute = ({ children }) => {
     const location = useLocation();  // Get the current location (where the user is trying to go)
-    const { updateMessage } = useErrorContext();
+    const { updateMessage } = useMessageContext();
     const { isAuthenticated } = useAuth();
 
-    console.log("Private route checking for authentication: " + isAuthenticated);
-    console.log(localStorage.getItem('jwtToken'));
-
+    // Use useEffect to handle side effects
+    useEffect(() => {
+        if (!isAuthenticated) {
+            updateMessage('You must login to access this data', false);
+        }
+    }, [isAuthenticated, updateMessage]);  // Dependency array
 
     // Check if user is authenticated
     if (!isAuthenticated) {
-        updateMessage('You must login to access this data', false);
         // If not authenticated, show a message with a login link
         // also pass in the location (the route the user tried to access), so that we can return the user
         // to that page after logging in

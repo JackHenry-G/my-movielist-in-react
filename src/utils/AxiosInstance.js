@@ -1,34 +1,26 @@
 // src/utils/axiosInstance.js
 import axios from 'axios';
-import {jwtDecode} from "jwt-decode";
 import CustomError from "../error/CustomError";
 
 // Create an Axios instance
 const axiosInstance = axios.create({
-    baseURL: 'http://localhost:8080/api/v1',
+    baseURL: process.env.REACT_APP_MOVIELIST_BACKEND_BASE_URL,
 });
 
-// Function to set up interceptors
-export const setupAxiosInterceptors = (navigate, location, updateMessage) => {
-    // Create an interceptor for requests
+/**
+ * Intercepts any axios request and response using this axios instance, to add extra processing.
+ *
+ * @param addAuthTokenToRequestHeaders
+ * @param navigate
+ * @param updateMessage
+ */
+export const setupAxiosInterceptors = (addAuthTokenToRequestHeaders, navigate, updateMessage) => {
+
     axiosInstance.interceptors.request.use(
         (config) => {
-            const token = localStorage.getItem("jwtToken");
-            if (token) {
-                const decodedToken = jwtDecode(token);
-                const currentTime = Date.now() / 1000;
+            // add the jwt authorization token before any request
+            addAuthTokenToRequestHeaders(config);
 
-                // Check if the token is valid (not expired)
-                const isTokenValid = decodedToken.exp > currentTime;
-
-                if (isTokenValid) {
-                    console.log("Token valid. Adding to headers.");
-                    config.headers['Authorization'] = `Bearer ${token}`;
-                } else {
-                    console.log("Token invalid. Removing from storage");
-                    localStorage.removeItem("jwtToken");
-                }
-            }
             return config;
         },
         (error) => {
@@ -51,7 +43,6 @@ export const setupAxiosInterceptors = (navigate, location, updateMessage) => {
                 // Extract relevant information
                 const status = response.status;
                 const data = response.data;
-                console.log("Data = " + data);
 
                 switch (status) {
                     case 401:
@@ -77,7 +68,6 @@ export const setupAxiosInterceptors = (navigate, location, updateMessage) => {
                         break;
                     default:
                         if (data) {
-                            console.log("Setting error message to data + " + data + " _ " + status);
                             customErrorMessage = data;
                         }
                 }

@@ -1,14 +1,15 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {useLocation, useNavigate} from 'react-router-dom';
 import {useAuth} from "../context/AuthContext";
-import axiosInstance from "../components/AxiosInstance";
+import axiosInstance from "../utils/AxiosInstance";
 import profilePicsImage from "../images/profile_pics_wide.png";
-import {useErrorContext} from "../context/ErrorContext";
+import {useMessageContext} from "../context/MessageContext";
 import CustomError from "../error/CustomError";
+import {isTestMode} from "../utils/config";
 
 const LoginPage = () => {
     const { login } = useAuth();
-    const { updateMessage } = useErrorContext();
+    const { updateMessage } = useMessageContext();
     const navigate = useNavigate();
     const location = useLocation();
     const from = location.state?.from?.pathname || "/home";
@@ -50,34 +51,30 @@ const LoginPage = () => {
     };
 
     const handleRegisterTestUser = async () => {
+        if (!isTestMode) {
+            console.warn('Test user registration is not available in production.');
+            return;
+        }
+
         try {
             const response = await axiosInstance.get("/auth/signuptest");
 
-
-            console.log("Response = " + JSON.stringify(response));
-            console.log("Respones status = " + response.status);
-
             if (response.status === 200) {
                 setUsername("test"); // FOR TEST PURPOSES ONLY
-                setPassword("pwd"); // FOR TEST PURPOSES ONLY
+                setPassword("pwd");  // FOR TEST PURPOSES ONLY
                 updateMessage('Test user signed up successfully!', true);
             } else {
                 updateMessage('Test user sign up failed!', false);
                 console.error('Failed to register test user:', JSON.stringify(response));
             }
         } catch (error) {
-            // Log the entire error object for debugging
             console.error("Caught error:", error);
-
-            // Check if the error is an instance of CustomError
             if (error instanceof CustomError) {
                 updateMessage(error.message, false);
             } else {
-                // Handle network errors or unknown issues
                 updateMessage('Unexpected error: ' + error, false);
             }
         }
-
     };
 
     return (
@@ -116,9 +113,12 @@ const LoginPage = () => {
 
                 <p>Don't have an account? <a href="/signup">Register here</a></p>
 
-                <button onClick={handleRegisterTestUser} style={{background: 'green', margin: '20px'}}>Register TEST
-                    user
-                </button>
+                {isTestMode &&
+                    <button onClick={handleRegisterTestUser} style={{background: 'green', margin: '20px'}}>Register TEST
+                        user
+                    </button>
+                }
+
             </div>
 
 

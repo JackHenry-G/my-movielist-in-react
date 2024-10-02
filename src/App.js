@@ -6,27 +6,29 @@ import Home from "./pages/Home";
 import Profile from "./pages/Profile";
 import Movies from "./pages/Movies";
 import PrivateRoute from "./components/PrivateRoute";
-import { AuthProvider } from "./context/AuthContext";
-import {setupAxiosInterceptors} from "./components/AxiosInstance";
+import {AuthProvider, useAuth} from "./context/AuthContext";
+import {setupAxiosInterceptors} from "./utils/AxiosInstance";
 import {useEffect} from "react";
 import Search from "./pages/Search";
 import Logout from "./pages/Logout";
-import {ErrorProvider, useErrorContext} from "./context/ErrorContext";
+import {MessageProvider, useMessageContext} from "./context/MessageContext";
+import NoPageFound from "./pages/NoPageFound";
 
 const AppRoutes = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const { updateMessage } = useErrorContext();
+    const { updateMessage } = useMessageContext();
+    const { addAuthTokenToRequestHeaders } = useAuth();
 
     // Set up Axios interceptors
     useEffect(() => {
-        setupAxiosInterceptors(navigate, location, updateMessage);
+        setupAxiosInterceptors(addAuthTokenToRequestHeaders, navigate, updateMessage);
 
         if (location.pathname !== '/login') {
-            updateMessage();
+            updateMessage(); // set message to null on page  load, to reset an errors
         }
 
-    }, [navigate, location]);
+    }, [navigate, location]); // not included update message because I don't want this to be called everytime the message updates. This would cause the message to be overwritten and never displayed
 
     return (
         <Routes>
@@ -67,14 +69,18 @@ const AppRoutes = () => {
                     </PrivateRoute>
                 }
             />
+
+            {/* Catch any undefined paths */}
+            <Route path="*" element={<NoPageFound />} />
         </Routes>
     );
 };
 
 export default function App() {
+
     return (
         <AuthProvider>
-            <ErrorProvider>
+            <MessageProvider>
                 <BrowserRouter>
                     <div className="app">
                         <div className="top-section">
@@ -86,7 +92,7 @@ export default function App() {
                         </div>
                     </div>
                 </BrowserRouter>
-            </ErrorProvider>
+            </MessageProvider>
         </AuthProvider>
     );
 }

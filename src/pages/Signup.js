@@ -1,7 +1,7 @@
 import React, {useState} from "react";
-import axiosInstance from "../components/AxiosInstance";
+import axiosInstance from "../utils/AxiosInstance";
 import profilePicsImage from "../images/profile_pics_wide.png";
-import {useErrorContext} from "../context/ErrorContext";
+import {useMessageContext} from "../context/MessageContext";
 
 export default function Signup() {
     const [email, setEmail] = useState("");
@@ -10,7 +10,7 @@ export default function Signup() {
     const [latitude, setLatitude] = useState(0.0);
     const [longitude, setLongitude] = useState(0.0);
 
-    const { updateMessage } = useErrorContext();
+    const { updateMessage } = useMessageContext();
 
     const [loginSuccess, setLoginSuccess] = useState('');
     const [loading, setIsLoading] = useState(false);
