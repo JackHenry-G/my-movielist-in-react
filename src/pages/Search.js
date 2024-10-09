@@ -27,6 +27,7 @@ export default function Search() {
                 return;
             }
 
+            console.log(params);
             // Use axiosInstance to make the request with specified path and params
             const response = await axiosInstance.get(path, {
                 params
@@ -61,8 +62,8 @@ export default function Search() {
                 <button
                     type="button"
                     onClick={() => handleMovieSearchRequest(
-                        '/tmdb/search/moviesByReleaseYear',
-                        { releaseYear: String(profile.favouriteReleaseYear) },
+                        '/tmdb/search/moviesByParams',
+                        {primary_release_year: String(profile.favouriteReleaseYear)},
                         profile.favouriteReleaseYear
                     )}
                     className="search-button-favourites"
@@ -71,9 +72,14 @@ export default function Search() {
                 </button>
                 <button
                     type="button"
+                    onClick={() => handleMovieSearchRequest(
+                        '/tmdb/search/moviesByParams',
+                        {with_genres: String(profile.favouriteGenre.id)},
+                        profile.favouriteGenre.id
+                    )}
                     className="search-button-favourites"
                 >
-                    *WIP BUTTON*
+                    {profile.favouriteGenre.name}
                 </button>
                 <button
                     type="button"

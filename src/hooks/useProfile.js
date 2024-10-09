@@ -8,6 +8,7 @@ const useProfile = () => {
             userId: '',
             username: '',
             favouriteReleaseYear: '',
+            favouriteGenre: { id: '', name: '' },
         }
     );
 
@@ -19,6 +20,7 @@ const useProfile = () => {
                 const response = await axiosInstance.get('/auth/profile');
 
                 if (response.status === 200 || response.status === 204) {
+                    console.log("Profile data: " + response.data);
                     setProfile(response.data);
                 }
             } catch (error) {

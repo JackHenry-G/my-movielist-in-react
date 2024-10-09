@@ -18,14 +18,13 @@ export default function SearchBar({handleSearch}) {
     const handleButtonClick = () => {
         handleSearch(String(query));
     }
-
     return (
         <div className="search-bar">
             <input
                 className="search-term"
                 id="movies-search-bar"
                 type="text"
-                placeholder="Search for your favourite movies..."
+                placeholder="Search for your favourite movies here or use the buttons below which are based on you watch history..."
                 value={query}
                 onChange={handleChange}
                 onKeyUp={handleOnKeyUp}

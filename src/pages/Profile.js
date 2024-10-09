@@ -74,7 +74,7 @@ export default function Profile() {
                         name="username"
                         placeholder="Username..."
                         value={profile.username}
-                        onChange={(e) => setEditedProfile({ ...profile, username: e.target.value })}
+                        onChange={(e) => setEditedProfile({...profile, username: e.target.value})}
                         readOnly // TODO: remove readonly once update username is fixed
                     />
 
@@ -84,6 +84,15 @@ export default function Profile() {
                         name="favouriteReleaseYear"
                         placeholder="..."
                         value={profile.favouriteReleaseYear}
+                        disabled
+                    />
+
+                    <label htmlFor="favouriteGenre">Favourite Genre:</label>
+                    <input
+                        type="text"
+                        name="favouriteGenre"
+                        placeholder="..."
+                        value={profile.favouriteGenre.name}
                         disabled
                     />
 
