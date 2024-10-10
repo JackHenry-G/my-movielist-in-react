@@ -68,7 +68,7 @@ export default function Search() {
                     )}
                     className="search-button-favourites"
                 >
-                    {profile.favouriteReleaseYear}
+                    Release year: {profile.favouriteReleaseYear}
                 </button>
                 <button
                     type="button"
@@ -79,31 +79,18 @@ export default function Search() {
                     )}
                     className="search-button-favourites"
                 >
-                    {profile.favouriteGenre.name}
+                    Genre: {profile.favouriteGenre.name}
                 </button>
                 <button
                     type="button"
+                    onClick={() => handleMovieSearchRequest(
+                        '/tmdb/search/popular-movies',
+                        null,
+                        "Popular",
+                    )}
                     className="search-button-favourites"
                 >
-                    *WIP BUTTON*
-                </button>
-                <button
-                    type="button"
-                    className="search-button-favourites"
-                >
-                    *WIP BUTTON*
-                </button>
-                <button
-                    type="button"
-                    className="search-button-favourites"
-                >
-                    *WIP BUTTON*
-                </button>
-                <button
-                    type="button"
-                    className="search-button-favourites"
-                >
-                    *WIP BUTTON*
+                    Popular movies
                 </button>
             </div>
 
