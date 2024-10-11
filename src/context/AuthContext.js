@@ -33,6 +33,7 @@ export const AuthProvider = ({ children }) => {
             console.log("Token invalid. Removing from storage and not adding to headers.");
             localStorage.removeItem("jwtToken");
         }
+
         return requestConfig;
     }
 

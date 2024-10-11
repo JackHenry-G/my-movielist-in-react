@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import axiosInstance from "../utils/AxiosInstance";
 import useProfile from "../hooks/useProfile";
 import profilePicsImage from "../images/profile_pics_wide.png";
@@ -9,15 +9,24 @@ export default function Profile() {
     const { login } = useAuth();
     const { updateMessage } = useMessageContext();
     const profile = useProfile()
-    const [editedProfile, setEditedProfile] = useState(profile); // Local state for editing profile
+
+    // Initialize editedUsername state
+    const [editedUsername, setEditedUsername] = useState("");
+
+    // Update the editedUsername state when the profile is loaded
+    useEffect(() => {
+        if (profile && profile.username) {
+            setEditedUsername(profile.username); // Set the state with the fetched profile username
+        }
+    }, [profile]);
 
     const handleUpdateProfile = async (event) => {
         event.preventDefault();
 
         try {
-            console.log("Attempting to update profile data with profile: ", profile);
+            console.log("Attempting to update profile data with profile: ", editedUsername);
             const formData = new FormData();
-            formData.append('username', profile.username);
+            formData.append('username', editedUsername);
 
             const response = await axiosInstance.post('/auth/profile/edit', formData, {
                 headers: {
@@ -26,17 +35,9 @@ export default function Profile() {
             });
 
             if (response.status === 200) {
-                const { token, username, email } = response.data;
+                const { token, username } = response.data;
 
-                login(token, username, email);
-                axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-
-                // Update local profile state with new data if needed
-                setEditedProfile(prevProfile => ({
-                    ...prevProfile,
-                    username: username, // Assuming username returned from response
-                    // Update other profile fields if necessary
-                }));
+                login(token, username);
 
                 updateMessage("Profile updated successfully!", true);
             } else {
@@ -73,9 +74,8 @@ export default function Profile() {
                         type="text"
                         name="username"
                         placeholder="Username..."
-                        value={profile.username}
-                        onChange={(e) => setEditedProfile({...profile, username: e.target.value})}
-                        readOnly // TODO: remove readonly once update username is fixed
+                        value={editedUsername}
+                        onChange={(e) => setEditedUsername(e.target.value)}
                     />
 
                     <label htmlFor="favouriteReleaseYear">Favourite Release Year:</label>
@@ -96,7 +96,7 @@ export default function Profile() {
                         disabled
                     />
 
-                    <button type="submit" disabled={true}>Update (**Under maintenance**)</button>
+                    <button type="submit">Update</button>
                 </form>
             </div>
         </div>
