@@ -12,7 +12,6 @@ export default function Signup() {
 
     const { updateMessage } = useMessageContext();
 
-    const [loginSuccess, setLoginSuccess] = useState('');
     const [loading, setIsLoading] = useState(false);
 
     const validateForm = () => {
@@ -148,7 +147,6 @@ export default function Signup() {
                     */ }
                 </form>
 
-                {loginSuccess && <p style={{color: 'green'}}>{loginSuccess}</p>}
                 {loading && (
                     <div className="loading-container">
                         <p>Processing your signup...</p>

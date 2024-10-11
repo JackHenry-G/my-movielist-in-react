@@ -28,7 +28,8 @@ const AppRoutes = () => {
             updateMessage(); // set message to null on page  load, to reset an errors
         }
 
-    }, [navigate, location]); // not included update message because I don't want this to be called everytime the message updates. This would cause the message to be overwritten and never displayed
+    }, [navigate, location]); // eslint-disable-line react-hooks/exhaustive-deps
+    // not included updateMessage because I don't want this to be called everytime the message updates. This would cause the message to be overwritten and never displayed
 
     return (
         <Routes>

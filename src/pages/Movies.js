@@ -24,9 +24,8 @@ export default function MovieList() {
         updateMessage("An error occurred while fetching the movie list: " + error.message, false);
       }
     };
-
     fetchMovies();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
 
   // Handle rating update
